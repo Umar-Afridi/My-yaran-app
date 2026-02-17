@@ -1,3 +1,14 @@
+<script>
+  // Right click روکنے کے لیے
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Keyboard shortcuts (Ctrl+U, Ctrl+S) روکنے کے لیے
+  document.onkeydown = function(e) {
+    if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 73)) {
+      return false;
+    }
+  };
+</script>
 
 <!DOCTYPE html>
 <html lang="en">

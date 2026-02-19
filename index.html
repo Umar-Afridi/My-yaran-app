@@ -24,14 +24,13 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Roboto:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Roboto:wght:400;500;700&display=swap');
         
         :root {
             --app-bg: #ffffff; 
             --active-text: #000000; 
             --inactive-text: #9ca3af; 
             --seat-size: 68px;
-            /* Height reduced to push icons down */
             --bottom-bar-height: 45px; 
         }
 
@@ -95,13 +94,13 @@
         .light-bg { background-color: var(--app-bg) !important; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* MAIN BOTTOM NAV (NO BORDER LINE) */
+        /* MAIN BOTTOM NAV */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--app-bg) !important; border: none !important; display: flex; justify-content: space-around; align-items: center; z-index: 50; padding-bottom: max(5px, env(safe-area-inset-bottom)); height: calc(60px + env(safe-area-inset-bottom)); box-shadow: none !important; }
         .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #9ca3af; transition: 0.3s; flex: 1; padding: 10px 0; }
         .nav-item i { font-size: 22px; margin-bottom: 3px; }
         .nav-item.active { color: #dc2626; font-weight: bold; }
 
-        /* ROOM VIEW - FIXED LAYOUT */
+        /* ROOM VIEW */
         #view-room { 
             display: none; 
             flex-direction: column; 
@@ -122,7 +121,6 @@
         .cinema-frame { position: relative; width: 96%; margin: 5px auto; aspect-ratio: 16/9; background: #000000; overflow: hidden; z-index: 10; border-radius: 20px; border: 1px solid #222; box-shadow: 0 5px 20px rgba(0,0,0,0.5); flex-shrink: 0; }
         #video-controls-wrapper { transition: all 0.4s ease-in-out; max-height: 200px; opacity: 1; overflow: hidden; margin-bottom: 5px; flex-shrink: 0; }
         
-        /* NEW FLEXIBLE CONTAINER FOR LOWER HALF */
         #room-lower-half {
             flex: 1;
             display: flex;
@@ -160,28 +158,18 @@
         
         .mics-container-main { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 5px; padding-top: 15px; padding-bottom: 5px; width: 100%; }
         
-        .mic-container-lg { 
-            width: 70px; height: 70px; 
-            border-radius: 50%; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border: 2px solid #333; 
-            display: flex; align-items: center; justify-content: center; position: relative; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 20; transition: transform 0.2s; overflow: visible !important; flex-shrink: 0; 
-        }
-        
-        .mic-container-sm { 
-            width: 55px; height: 55px; 
-            border-radius: 50%; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border: 2px solid #333; 
-            display: flex; align-items: center; justify-content: center; position: relative; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 20; overflow: visible !important; flex-shrink: 0; 
-        }
+        .seat-base { position: relative; display: flex; align-items: center; justify-content: center; background: transparent; border-radius: 50%; overflow: visible !important; }
+        .mic-container-lg { width: 70px; height: 70px; }
+        .mic-container-sm { width: 55px; height: 55px; }
+
+        .chair-bg-img { position: absolute; width: 65%; height: 65%; object-fit: contain; opacity: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)); z-index: 5; pointer-events: none; }
+        .user-dp-visual { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 20; border-radius: 50%; }
 
         .top-mic-row { display: flex; justify-content: center; align-items: center; gap: 2px; margin-bottom: 10px; }
         .bottom-mic-row { display: flex; gap: 12px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
         .mic-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
         
-        .has-frame { background: transparent !important; border: none !important; box-shadow: none !important; }
-        .seat-occupied { border-color: #22c55e !important; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
-        .seat-locked { border-color: #ef4444 !important; opacity: 0.5; cursor: not-allowed; }
-        
+        .has-frame .user-dp-visual { background: transparent; }
         .seat-mute-badge { position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #ef4444; z-index: 30; }
         .seat-mute-badge i { font-size: 10px; color: #ef4444; }
 
@@ -189,89 +177,22 @@
         .btn-action { font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 4px; color: white; cursor: pointer; text-transform: uppercase; width: 90%; text-align: center; }
         .btn-green { background: #22c55e; } .btn-red { background: #ef4444; } .btn-yellow { background: #eab308; color: black; } .btn-blue { background: #3b82f6; }
         
-        /* --- CHAT AREA WITH SWIPE/SCROLL --- */
+        /* CHAT AREA */
         #chat-display-area { 
-            flex: 1; /* Takes remaining space */
-            width: 100%; 
-            
-            /* Enable Scrolling / Swiping */
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            overscroll-behavior-y: contain;
-            
-            padding: 10px 15px; 
-            z-index: 20; 
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end; /* Keeps items at bottom naturally, but allows scroll up */
-            position: relative;
-            background: transparent !important;
-            color: white !important;
-            text-shadow: 0 1px 2px black;
-            padding-bottom: 10px;
-            margin-bottom: 0; 
-            
-            /* Fade out at the top */
-            mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
+            flex: 1; width: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 10px 15px; z-index: 20; display: flex; flex-direction: column; justify-content: flex-end; position: relative; background: transparent !important; color: white !important; text-shadow: 0 1px 2px black; padding-bottom: 10px; margin-bottom: 0; mask-image: linear-gradient(to bottom, transparent 0%, black 15%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%);
         }
-
-        .chat-message-bubble { 
-            background: rgba(20, 20, 20, 0.7); 
-            backdrop-filter: blur(3px); 
-            padding: 6px 12px; 
-            border-radius: 15px; 
-            margin-bottom: 6px; 
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            color: white !important; 
-            font-size: 12px; 
-            max-width: 85%; 
-            width: fit-content; 
-            word-wrap: break-word; 
-            animation: slideInUp 0.2s ease-out; 
-            text-shadow: 0 1px 1px black; 
-            flex-shrink: 0;
-        }
+        .chat-message-bubble { background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(3px); padding: 6px 12px; border-radius: 15px; margin-bottom: 6px; border: 1px solid rgba(255, 255, 255, 0.15); color: white !important; font-size: 12px; max-width: 85%; width: fit-content; word-wrap: break-word; animation: slideInUp 0.2s ease-out; text-shadow: 0 1px 1px black; flex-shrink: 0; }
         .chat-message-bubble b { color: #facc15; margin-right: 5px; }
         .chat-system-msg { align-self: center; background: rgba(255, 255, 255, 0.2); color: #eee; font-size: 10px; font-style: italic; padding: 4px 10px; border-radius: 20px; margin: 5px 0; text-align: center; border: none; width: auto; max-width: 90%; flex-shrink: 0; text-shadow: 0 1px 2px black; }
         
         @keyframes slideInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* ROOM BOTTOM BAR - SMALLER & LOWER */
-        #room-bottom-bar { 
-            position: relative; 
-            flex-shrink: 0; 
-            width: 100%; 
-            height: var(--bottom-bar-height);
-            /* Minimized padding to push it down */
-            padding: 0 25px; 
-            padding-bottom: max(2px, env(safe-area-inset-bottom)); 
-            background: transparent !important; 
-            border-top: none; 
-            display: flex; 
-            align-items: center; /* Vertically center in the reduced height */
-            justify-content: space-between; 
-            z-index: 100; 
-            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); 
-        }
-        /* Smaller Icons */
+        /* ROOM BOTTOM BAR */
+        #room-bottom-bar { position: relative; flex-shrink: 0; width: 100%; height: var(--bottom-bar-height); padding: 0 25px; padding-bottom: max(2px, env(safe-area-inset-bottom)); background: transparent !important; border-top: none; display: flex; align-items: center; justify-content: space-between; z-index: 100; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); }
         .room-icon-btn { font-size: 16px; color: #ffffff; cursor: pointer; transition: 0.2s; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
         /* CHAT INPUT LAYER */
-        #room-chat-input-layer { 
-            display: none; 
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #111;
-            padding: 10px 15px;
-            z-index: 1000;
-            align-items: center; 
-            gap: 10px;
-            border-top: 1px solid #333;
-            padding-bottom: max(10px, env(safe-area-inset-bottom));
-        }
+        #room-chat-input-layer { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #111; padding: 10px 15px; z-index: 1000; align-items: center; gap: 10px; border-top: 1px solid #333; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
 
         #search-overlay { position: absolute; top: 70px; left: 0; width: 100%; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); z-index: 40; padding: 20px; transform: translateY(-150%); transition: transform 0.3s ease-out; border-bottom: 1px solid #ccc; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         #search-overlay.open { transform: translateY(0); }
@@ -341,12 +262,269 @@
         .cr-input { background: #222; border: 1px solid #333; color: white; padding: 12px; width: 100%; border-radius: 8px; margin-bottom: 15px; outline: none; text-align: center; }
         .cr-input:focus { border-color: #dc2626; }
         .cr-btn { background: #dc2626; width: 100%; padding: 15px; border-radius: 30px; font-weight: bold; font-size: 16px; margin-top: 20px; box-shadow: 0 0 15px rgba(220, 38, 38, 0.5); }
+
+        /* --- UPDATED ROCKET SYSTEM STYLES (MATCHING SCREENSHOT) --- */
+        #rocket-trigger-btn {
+            position: absolute;
+            bottom: 70px; /* Sits above the bottom bar */
+            right: 15px;  /* Aligned to right */
+            width: 50px;
+            height: 50px;
+            z-index: 50;
+            cursor: pointer;
+            animation: floatRocket 3s ease-in-out infinite;
+        }
+
+        .rocket-display-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+        }
+
+        @keyframes floatRocket {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Flying Animation Layer */
+        #rocket-fly-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* BIG ROCKET FOR LAUNCH */
+        .flying-rocket {
+            width: 70vw; 
+            max-width: 400px;
+            height: auto;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 1;
+            z-index: 3002;
+            filter: drop-shadow(0 0 20px rgba(255, 100, 0, 0.8));
+        }
+
+        /* COUNTDOWN STYLE */
+        .rocket-countdown {
+            font-size: 100px;
+            font-weight: 900;
+            color: #facc15;
+            text-shadow: 0 0 20px black, 0 0 40px red;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3005;
+            animation: pulseCount 1s infinite;
+        }
+        
+        @keyframes pulseCount {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Shake/Rumble Animation */
+        .rocket-rumble {
+            animation: rumble 0.1s infinite;
+        }
+        @keyframes rumble {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 5px); }
+            50% { transform: translate(5px, -5px); }
+            75% { transform: translate(-5px, -5px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .rocket-launching {
+            animation: bigLaunch 2.5s ease-in-out forwards;
+        }
+
+        .sparkle-effect {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            animation: sparkleAnim 1s ease-out forwards;
+        }
+
+        @keyframes sparkleAnim {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        @keyframes bigLaunch {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            20% { transform: translateY(20px) scale(0.9); opacity: 1; } 
+            100% { transform: translateY(-150vh) scale(0.5); opacity: 0; }
+        }
+
+        /* --- UPDATED PURPLE MODAL STYLES (SCREENSHOT 2) --- */
+        #rocket-details-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Purple/Cosmic Card */
+        .rocket-modal-card {
+            background: linear-gradient(180deg, #2e0249 0%, #5b0a91 100%);
+            border: 2px solid #d946ef;
+            border-radius: 24px;
+            width: 95%;
+            max-width: 400px;
+            height: 80vh;
+            display: flex;
+            position: relative;
+            padding: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+        }
+
+        .modal-left-col {
+            width: 25%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .modal-level-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .modal-level-btn.active {
+            border-color: #facc15;
+            background: rgba(250, 204, 21, 0.2);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+        }
+
+        .modal-center-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .big-center-rocket {
+            width: 150px;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+            /* No continuous animation here to match static display in modal usually, or keep hover */
+        }
+
+        .modal-right-col {
+            width: 15%;
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        /* Tube Progress Bar */
+        .tube-container {
+            width: 30px;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .tube-fill {
+            width: 100%;
+            background: linear-gradient(to top, #22c55e, #a3e635);
+            transition: height 0.5s ease;
+        }
+        
+        .tube-percent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            text-shadow: 0 1px 2px black;
+        }
+
+        .rewards-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+        }
+        
+        .rewards-box {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #d946ef;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .reward-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #facc15;
+            font-size: 10px;
+        }
+
+        .reward-img { width: 30px; height: 30px; object-fit: contain; margin-bottom: 5px; }
+
+        /* Gift Modal Styles */
+        .gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
+        .gift-item { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 5px; text-align: center; cursor: pointer; border: 1px solid transparent; }
+        .gift-item:hover { border-color: #facc15; background: rgba(255,255,255,0.2); }
+        .gift-img { width: 40px; height: 40px; object-fit: contain; margin: 0 auto; }
+        .gift-price { font-size: 10px; color: #facc15; margin-top: 2px; display: block; }
     </style>
 </head>
 <body>
     
     <input type="file" id="image-upload" accept="image/*" style="display: none;">
     <input type="file" id="video-upload" accept="video/*" style="display: none;">
+
+    <audio id="rocket-sound" src="https://assets.mixkit.co/active_storage/sfx/2558/2558-preview.mp3" preload="auto"></audio>
 
     <div id="app-container">
         
@@ -424,7 +602,7 @@
             </div>
         </div>
         
-        <!-- THEME MODAL (UPDATED WITH IMAGES AND VIDEO BUTTONS) -->
+        <!-- THEME MODAL -->
         <div id="theme-modal">
             <div class="bg-zinc-900 p-6 rounded-xl w-11/12 max-w-sm border border-zinc-700 relative shadow-2xl overflow-y-auto max-h-[80vh]">
                 <button onclick="closeThemeModal()" class="absolute top-3 right-3 text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -690,6 +868,7 @@
             </div>
         </div>
 
+        <!-- ================== UPDATED ROOM VIEW WITH NEW SEAT DESIGN ================== -->
         <div id="view-room">
             <div id="room-exit-bar">
                 <button onclick="minimizeRoom()" class="exit-icon-btn">
@@ -748,30 +927,147 @@
                 </div>
             </div>
 
-            <!-- ROOM LOWER HALF (Contains Mics + Chat Area for Theme Coverage) -->
+            <!-- ROOM LOWER HALF - with updated seat design -->
             <div id="room-lower-half">
-                <!-- VIDEO BACKGROUND ELEMENT FOR THEMES -->
                 <video id="theme-video-bg" loop muted playsinline class="hidden absolute top-0 left-0 w-full h-full object-cover -z-10"></video>
+
+                <!-- ROCKET SYSTEM BUTTON (NEW) -->
+                <div id="rocket-trigger-btn" onclick="openRocketDetails()">
+                    <img src="./rocket1.png" class="w-full h-full object-contain filter drop-shadow-lg">
+                </div>
+                
+                <!-- Rocket Details Modal -->
+                <div id="rocket-details-modal">
+                    <div class="rocket-modal-card">
+                        <button onclick="closeRocketDetails()" class="absolute top-2 right-3 text-gray-400 z-50"><i class="fa-solid fa-xmark text-xl"></i></button>
+
+                        <!-- Left Column: Levels -->
+                        <div class="modal-left-col">
+                            <div class="modal-level-btn" id="btn-lvl-4">
+                                <span>LV.4</span>
+                            </div>
+                            <div class="modal-level-btn" id="btn-lvl-3">
+                                <span>LV.3</span>
+                            </div>
+                            <div class="modal-level-btn" id="btn-lvl-2">
+                                <span>LV.2</span>
+                            </div>
+                            <div class="modal-level-btn" id="btn-lvl-1">
+                                <span>LV.1</span>
+                            </div>
+                        </div>
+
+                        <!-- Center Column: Big Rocket Display -->
+                        <div class="modal-center-col">
+                            <img id="modal-big-rocket" src="./rocket1.png" class="big-center-rocket">
+                            
+                            <div class="rewards-panel">
+                                <div class="rewards-box">
+                                    <div class="reward-item">
+                                        <img src="https://placehold.co/40?text=F" class="reward-img">
+                                        <span>Frame x1</span>
+                                    </div>
+                                    <div class="reward-item">
+                                        <img src="https://placehold.co/40?text=E" class="reward-img">
+                                        <span>Entry x1</span>
+                                    </div>
+                                    <div class="reward-item">
+                                        <img src="https://placehold.co/40?text=B" class="reward-img">
+                                        <span>Badge x1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Tube Progress -->
+                        <div class="modal-right-col">
+                            <div class="tube-container">
+                                <div id="rocket-tube-fill" class="tube-fill"></div>
+                                <div id="rocket-tube-text" class="tube-percent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flying Animation Layer -->
+                <div id="rocket-fly-layer"></div>
 
                 <div id="mics-scroll-area">
                     <div class="mics-container-main">
-                        <div class="top-mic-row">
-                            <div class="mic-wrapper"><div class="mic-container-lg" id="cont-seat1" onclick="toggleMicMenu('seat1', 'UMAR', event)"><div id="seat1-visual" class="visual-root"></div><div id="menu-seat1" class="action-menu-overlay"></div></div><span id="seat1-name" class="text-[10px] mt-1 font-bold text-gray-500 tracking-wider uppercase text-center block">UMAR</span></div>
-                            <div id="heartbeat-container" class="heartbeat-wrapper"><img src="./left.png" class="line-img left-line" alt="Left Line"><img src="./couple_heart.png" class="hb-img" alt="Heart"><img src="./right.png" class="line-img right-line" alt="Right Line"></div>
-                            <div class="mic-wrapper"><div class="mic-container-lg" id="cont-seat2" onclick="toggleMicMenu('seat2', 'GURIYA', event)"><div id="seat2-visual" class="visual-root"></div><div id="menu-seat2" class="action-menu-overlay"></div></div><span id="seat2-name" class="text-[10px] mt-1 font-bold text-gray-500 tracking-wider uppercase text-center block">GURIYA</span></div>
+                        <!-- TOP ROW - Large seats (UMAR & GURIYA) with chair background -->
+                        <div class="top-mic-row flex justify-center items-center gap-2">
+                            <!-- Seat 1 (UMAR) -->
+                            <div class="mic-wrapper" id="wrapper-seat1">
+                                <div class="seat-base mic-container-lg" id="cont-seat1" onclick="toggleMicMenu('seat1', 'UMAR', event)">
+                                    <img src="./chair.png" class="chair-bg-img" onerror="this.style.display='none'">
+                                    <div id="seat1-visual" class="user-dp-visual"></div>
+                                    <div id="menu-seat1" class="action-menu-overlay"></div>
+                                </div>
+                                <span id="seat1-name" class="seat-name">UMAR</span>
+                            </div>
+
+                            <!-- Heartbeat Container -->
+                            <div id="heartbeat-container" class="heartbeat-wrapper">
+                                <img src="./left.png" class="line-img left-line" alt="Left Line">
+                                <img src="./couple_heart.png" class="hb-img" alt="Heart">
+                                <img src="./right.png" class="line-img right-line" alt="Right Line">
+                            </div>
+
+                            <!-- Seat 2 (GURIYA) -->
+                            <div class="mic-wrapper" id="wrapper-seat2">
+                                <div class="seat-base mic-container-lg" id="cont-seat2" onclick="toggleMicMenu('seat2', 'GURIYA', event)">
+                                    <img src="./chair.png" class="chair-bg-img" onerror="this.style.display='none'">
+                                    <div id="seat2-visual" class="user-dp-visual"></div>
+                                    <div id="menu-seat2" class="action-menu-overlay"></div>
+                                </div>
+                                <span id="seat2-name" class="seat-name">GURIYA</span>
+                            </div>
                         </div>
-                        <div class="bottom-mic-row">
-                            <div class="mic-wrapper"><div class="mic-container-sm" id="cont-seat3" onclick="toggleMicMenu('seat3', 'M-1', event)"><div id="seat3-visual" class="visual-root"></div><div id="menu-seat3" class="action-menu-overlay"></div></div><span id="seat3-name" class="text-xs font-bold mt-1 text-gray-500 block">1</span></div>
-                            <div class="mic-wrapper"><div class="mic-container-sm" id="cont-seat4" onclick="toggleMicMenu('seat4', 'M-2', event)"><div id="seat4-visual" class="visual-root"></div><div id="menu-seat4" class="action-menu-overlay"></div></div><span id="seat4-name" class="text-xs font-bold mt-1 text-gray-500 block">2</span></div>
-                            <div class="mic-wrapper"><div class="mic-container-sm" id="cont-seat5" onclick="toggleMicMenu('seat5', 'M-3', event)"><div id="seat5-visual" class="visual-root"></div><div id="menu-seat5" class="action-menu-overlay"></div></div><span id="seat5-name" class="text-xs font-bold mt-1 text-gray-500 block">3</span></div>
-                            <div class="mic-wrapper"><div class="mic-container-sm" id="cont-seat6" onclick="toggleMicMenu('seat6', 'M-4', event)"><div id="seat6-visual" class="visual-root"></div><div id="menu-seat6" class="action-menu-overlay"></div></div><span id="seat6-name" class="text-xs font-bold mt-1 text-gray-500 block">4</span></div>
+
+                        <!-- BOTTOM ROW - Small seats (1-4) with chair background -->
+                        <div class="bottom-mic-row flex justify-center gap-3 flex-wrap">
+                            <!-- Seat 3 -->
+                            <div class="mic-wrapper" id="wrapper-seat3">
+                                <div class="seat-base mic-container-sm" id="cont-seat3" onclick="toggleMicMenu('seat3', '1', event)">
+                                    <img src="./chair.png" class="chair-bg-img" onerror="this.style.display='none'">
+                                    <div id="seat3-visual" class="user-dp-visual"></div>
+                                    <div id="menu-seat3" class="action-menu-overlay"></div>
+                                </div>
+                                <span id="seat3-name" class="seat-name">1</span>
+                            </div>
+                            <!-- Seat 4 -->
+                            <div class="mic-wrapper" id="wrapper-seat4">
+                                <div class="seat-base mic-container-sm" id="cont-seat4" onclick="toggleMicMenu('seat4', '2', event)">
+                                    <img src="./chair.png" class="chair-bg-img" onerror="this.style.display='none'">
+                                    <div id="seat4-visual" class="user-dp-visual"></div>
+                                    <div id="menu-seat4" class="action-menu-overlay"></div>
+                                </div>
+                                <span id="seat4-name" class="seat-name">2</span>
+                            </div>
+                            <!-- Seat 5 -->
+                            <div class="mic-wrapper" id="wrapper-seat5">
+                                <div class="seat-base mic-container-sm" id="cont-seat5" onclick="toggleMicMenu('seat5', '3', event)">
+                                    <img src="./chair.png" class="chair-bg-img" onerror="this.style.display='none'">
+                                    <div id="seat5-visual" class="user-dp-visual"></div>
+                                    <div id="menu-seat5" class="action-menu-overlay"></div>
+                                </div>
+                                <span id="seat5-name" class="seat-name">3</span>
+                            </div>
+                            <!-- Seat 6 -->
+                            <div class="mic-wrapper" id="wrapper-seat6">
+                                <div class="seat-base mic-container-sm" id="cont-seat6" onclick="toggleMicMenu('seat6', '4', event)">
+                                    <img src="./chair.png" class="chair-bg-img" onerror="this.style.display='none'">
+                                    <div id="seat6-visual" class="user-dp-visual"></div>
+                                    <div id="menu-seat6" class="action-menu-overlay"></div>
+                                </div>
+                                <span id="seat6-name" class="seat-name">4</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="chat-display-area"></div>
             </div>
-            <!-- END OF ROOM LOWER HALF -->
             
             <div id="room-bottom-bar">
                 <div class="flex items-center justify-between w-full" id="room-icons-container">
@@ -779,6 +1075,7 @@
                     <i onclick="minimizeRoom(); switchTab('view-inbox', document.getElementById('btn-inbox'))" class="fa-solid fa-inbox room-icon-btn"></i>
                     <i onclick="toggleMic()" id="btn-mic" class="fa-solid fa-microphone room-icon-btn text-white"></i>
                     <i onclick="toggleSpeaker()" id="btn-speaker" class="fa-solid fa-volume-high room-icon-btn text-white"></i>
+                    <i onclick="document.getElementById('gift-modal').classList.remove('hidden')" class="fa-solid fa-gift room-icon-btn text-pink-400"></i>
                 </div>
                 
                 <form id="room-chat-input-layer" onsubmit="sendRoomMessage(event)">
@@ -796,20 +1093,49 @@
         </nav>
     </div>
 
+    <!-- Gift Modal -->
+    <div id="gift-modal" class="hidden fixed inset-0 bg-black/80 z-[200] flex flex-col justify-end">
+        <div onclick="document.getElementById('gift-modal').classList.add('hidden')" class="flex-1"></div>
+        <div class="bg-gray-900 rounded-t-2xl p-4 border-t border-gray-700">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-white font-bold">Send Gifts</h3>
+                <span class="text-yellow-400 text-xs font-bold">Coins: Unlimited</span>
+            </div>
+            <div class="gift-grid">
+                <div class="gift-item" onclick="sendGift('Rose', 10000)">
+                    <img src="https://placehold.co/50?text=🌹" class="gift-img">
+                    <span class="gift-price">10k</span>
+                </div>
+                <div class="gift-item" onclick="sendGift('Ring', 50000)">
+                    <img src="https://placehold.co/50?text=💍" class="gift-img">
+                    <span class="gift-price">50k</span>
+                </div>
+                <div class="gift-item" onclick="sendGift('Car', 300000)">
+                    <img src="https://placehold.co/50?text=🏎️" class="gift-img">
+                    <span class="gift-price">300k</span>
+                </div>
+                <div class="gift-item" onclick="sendGift('Rocket', 500000)">
+                    <img src="https://placehold.co/50?text=🚀" class="gift-img">
+                    <span class="gift-price">500k</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getDatabase, ref, set, get, push, onValue, update, remove, child, onDisconnect, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
         const firebaseConfig = {
-  apiKey: "AIzaSyDsINqjN-WfgOHYm592c0Hq1zyoonDJ5qI",
-  authDomain: "yaraan-app-b2296.firebaseapp.com",
-  databaseURL: "https://yaraan-app-b2296-default-rtdb.firebaseio.com",
-  projectId: "yaraan-app-b2296",
-  storageBucket: "yaraan-app-b2296.firebasestorage.app",
-  messagingSenderId: "39282278939",
-  appId: "1:39282278939:web:2337152b888edd03af2ebe"
-};
+            apiKey: "AIzaSyDsINqjN-WfgOHYm592c0Hq1zyoonDJ5qI",
+            authDomain: "yaraan-app-b2296.firebaseapp.com",
+            databaseURL: "https://yaraan-app-b2296-default-rtdb.firebaseio.com",
+            projectId: "yaraan-app-b2296",
+            storageBucket: "yaraan-app-b2296.firebasestorage.app",
+            messagingSenderId: "39282278939",
+            appId: "1:39282278939:web:2337152b888edd03af2ebe"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -830,7 +1156,179 @@
         let isSpeakerMuted = false;
 
         const tabs = ['following', 'popular', 'recent'];
-        const micArea = document.getElementById('mics-scroll-area');
+
+        // --- ROCKET SYSTEM LOGIC ---
+        const ROCKET_LEVELS = [
+            { level: 1, cost: 300000, img: './rocket1.png' },
+            { level: 2, cost: 500000, img: './rocket2.png' },
+            { level: 3, cost: 2000000, img: './rocket3.png' },
+            { level: 4, cost: 3000000, img: './rocket4.png' }
+        ];
+
+        let currentRoomExp = 0;
+        let lastRocketLevel = 0;
+
+        function initRocketListener(rid) {
+            // New logic: ensure new button is visible instead of old container
+            document.getElementById('rocket-trigger-btn').classList.remove('hidden');
+            
+            // Listen to Room Experience/Coins
+            onValue(ref(db, `rooms/${rid}/roomExp`), (snap) => {
+                currentRoomExp = snap.val() || 0;
+                updateRocketUI(currentRoomExp);
+            });
+        }
+
+        function updateRocketUI(exp) {
+            let targetLevel = 0;
+            let targetImg = './rocket1.png'; // Default
+            let nextThreshold = ROCKET_LEVELS[0].cost;
+            let prevThreshold = 0;
+
+            // Determine Level
+            for (let i = 0; i < ROCKET_LEVELS.length; i++) {
+                if (exp >= ROCKET_LEVELS[i].cost) {
+                    targetLevel = ROCKET_LEVELS[i].level;
+                    targetImg = ROCKET_LEVELS[i].img;
+                    prevThreshold = ROCKET_LEVELS[i].cost;
+                    // Set next threshold
+                    if (i < ROCKET_LEVELS.length - 1) {
+                        nextThreshold = ROCKET_LEVELS[i+1].cost;
+                    } else {
+                        nextThreshold = exp * 1.5; // Max level reached
+                    }
+                }
+            }
+
+            // Update Display Image inside the new Trigger Button
+            // Note: The img tag inside #rocket-trigger-btn doesn't have an ID, we target it via querySelector
+            const triggerImg = document.querySelector('#rocket-trigger-btn img');
+            if (triggerImg) triggerImg.src = targetImg;
+            
+            // Also update Modal Big Rocket
+            document.getElementById('modal-big-rocket').src = targetImg;
+            
+            // Highlight Level Buttons
+            document.querySelectorAll('.modal-level-btn').forEach(btn => btn.classList.remove('active'));
+            if(targetLevel >= 1) document.getElementById('btn-lvl-1').classList.add('active');
+            if(targetLevel >= 2) document.getElementById('btn-lvl-2').classList.add('active');
+            if(targetLevel >= 3) document.getElementById('btn-lvl-3').classList.add('active');
+            if(targetLevel >= 4) document.getElementById('btn-lvl-4').classList.add('active');
+
+            // Calculate Percentage for Tube
+            let percentage = 0;
+            if (targetLevel < 4) {
+                percentage = ((exp - prevThreshold) / (nextThreshold - prevThreshold)) * 100;
+            } else {
+                percentage = 100;
+            }
+            percentage = Math.max(0, Math.min(100, percentage));
+
+            // Vertical Tube Update
+            document.getElementById('rocket-tube-fill').style.height = `${percentage}%`;
+            document.getElementById('rocket-tube-text').innerText = `${Math.floor(percentage)}%`;
+
+            // --- ANIMATION TRIGGER ---
+            if (targetLevel > lastRocketLevel && lastRocketLevel !== 0) {
+                const isMaxLevel = (targetLevel === 4);
+                playRocketAnimation(targetImg, isMaxLevel);
+                
+                push(ref(db, `rooms/${currentRoomId}/messages`), { 
+                    name: "System", 
+                    text: `🚀 Room Leveled Up to Rocket ${targetLevel}!`, 
+                    type: 'system', 
+                    timestamp: Date.now() 
+                });
+            }
+            lastRocketLevel = targetLevel;
+        }
+
+        window.openRocketDetails = () => document.getElementById('rocket-details-modal').style.display='flex';
+        window.closeRocketDetails = () => document.getElementById('rocket-details-modal').style.display='none';
+
+        function playRocketAnimation(imgSrc, isMaxLevel) {
+            const layer = document.getElementById('rocket-fly-layer');
+            layer.style.display = 'flex'; // Make visible
+
+            // HTML Structure: Rocket Image + Countdown Div
+            layer.innerHTML = `
+                <div id="rocket-countdown-display" class="rocket-countdown">8</div>
+                <img src="${imgSrc}" id="active-flying-rocket" class="flying-rocket rocket-rumble" style="opacity: 1;">
+            `;
+
+            let count = 8;
+            const counterEl = document.getElementById('rocket-countdown-display');
+            const rocketEl = document.getElementById('active-flying-rocket');
+            const audio = document.getElementById('rocket-sound');
+
+            const interval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    counterEl.innerText = count;
+                } else {
+                    // Launch Time!
+                    clearInterval(interval);
+                    counterEl.style.display = 'none'; // Hide numbers
+
+                    // Play Sound
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log(e));
+
+                    // Change Animation: Stop rumble, Start Launch
+                    rocketEl.classList.remove('rocket-rumble');
+                    rocketEl.classList.add('rocket-launching');
+
+                    // Sparkle Effect
+                    for(let i=0; i<20; i++) {
+                        const spark = document.createElement('div');
+                        spark.className = 'sparkle-effect';
+                        spark.style.left = Math.random() * 100 + '%';
+                        spark.style.top = Math.random() * 100 + '%';
+                        spark.style.animationDelay = Math.random() + 's';
+                        layer.appendChild(spark);
+                    }
+
+                    // Reset Logic if Level 4
+                    if (isMaxLevel) {
+                        setTimeout(() => {
+                            // Reset Database Exp to 0
+                            set(ref(db, `rooms/${currentRoomId}/roomExp`), 0);
+                            push(ref(db, `rooms/${currentRoomId}/messages`), {
+                                name: "System",
+                                text: "✨ Rocket Cycle Reset! Start again! ✨",
+                                type: 'system',
+                                timestamp: Date.now()
+                            });
+                        }, 2000); // Reset shortly after launch starts
+                    }
+
+                    // Cleanup Layer
+                    setTimeout(() => {
+                        layer.style.display = 'none';
+                        layer.innerHTML = '';
+                    }, 2500); // 2.5s duration for flight
+                }
+            }, 1000); // 1 second intervals
+        }
+
+        window.sendGift = async (giftName, cost) => {
+            if(!currentRoomId) return;
+
+            const expRef = ref(db, `rooms/${currentRoomId}/roomExp`);
+            await runTransaction(expRef, (currentExp) => {
+                return (currentExp || 0) + cost;
+            });
+
+            await push(ref(db, `rooms/${currentRoomId}/messages`), { 
+                name: currentUser.displayName, 
+                text: `Sent ${giftName} 🎁 (Exp +${cost})`, 
+                type: 'gift', 
+                timestamp: Date.now() 
+            });
+
+            document.getElementById('gift-modal').classList.add('hidden');
+            Swal.fire({toast:true, icon:'success', title:`Sent ${giftName}!`, position:'center', timer:1000, showConfirmButton:false});
+        };
 
         // --- BANNER CAROUSEL LOGIC ---
         const bannerTrack = document.getElementById('banner-track');
@@ -839,7 +1337,6 @@
         let bannerInterval;
         const totalBanners = 3; 
 
-        // Initialize dots
         for(let i=0; i<totalBanners; i++) {
             const dot = document.createElement('div');
             dot.classList.add('dot');
@@ -866,7 +1363,6 @@
             bannerInterval = setInterval(nextBanner, 3000); 
         }
 
-        // Banner Swipe Logic
         let bannerStartX = 0;
         const bannerContainer = document.getElementById('main-banner-carousel');
         
@@ -1126,7 +1622,6 @@
                 if(snap.exists()) { 
                     count = Object.keys(snap.val()).length;
                     for (const [uid, name] of Object.entries(snap.val())) {
-                        // Fetch actual profile pic for inbox
                         const fSnap = await get(ref(db, `users/${uid}`));
                         const fData = fSnap.val() || {};
                         const pic = fData.photoURL || `https://ui-avatars.com/api/?name=${name}`;
@@ -1208,7 +1703,7 @@
             closeRoomSettings();
         }
         
-        // --- THEME LOGIC START (UPDATED FOR VIDEO) ---
+        // --- THEME LOGIC START ---
         window.openThemeModal = () => {
             closeRoomSettings();
             document.getElementById('theme-modal').classList.add('open');
@@ -1266,20 +1761,18 @@
                 document.getElementById('guest-touch-blocker').style.display = 'none'; 
                 document.getElementById('empty-state-trigger').style.display = 'flex'; 
                 
-                // APPLY THEME IF EXISTS to NEW LOWER HALF (Handling Video/Image)
+                // APPLY THEME IF EXISTS
                 const theme = currentRoomData.theme;
                 const area = document.getElementById('room-lower-half');
                 const videoBg = document.getElementById('theme-video-bg');
                 
                 if(theme) {
                     if(theme.endsWith('.mp4')) {
-                        // Video Theme
                         area.style.backgroundImage = 'none';
                         videoBg.src = `./${theme}`;
                         videoBg.classList.remove('hidden');
                         videoBg.play().catch(e => console.log("Auto-play prevented"));
                     } else {
-                        // Image Theme
                         videoBg.classList.add('hidden');
                         videoBg.pause();
                         area.style.backgroundImage = `url('./${theme}')`;
@@ -1295,6 +1788,10 @@
 
             onValue(ref(db, `rooms/${rid}/kicked/${currentUser.uid}`), (s) => { if(s.exists() && currentRoomId === rid) { leaveRoomFull(); Swal.fire('Kicked', 'Removed by host.', 'warning'); } }); 
             switchTab('view-room'); 
+            
+            // Rocket listener
+            initRocketListener(rid);
+
             const userRef = ref(db, `rooms/${rid}/activeUsers/${currentUser.uid}`); set(userRef, currentUser.displayName); onDisconnect(userRef).remove();
             onValue(ref(db, `rooms/${rid}/activeUsers`), (snap) => { const count = snap.exists() ? Object.keys(snap.val()).length : 0; document.getElementById('room-user-count').innerText = count; });
             push(ref(db, `rooms/${rid}/messages`), { name: "System", text: `${currentUser.displayName} entered the room.`, type: 'system', timestamp: Date.now() });
@@ -1337,12 +1834,30 @@
                 } 
                 else { trigger.style.display = 'flex'; iframe.classList.add('hidden'); iframe.src=""; } 
             }); 
+            
+            // ========== UPDATED SEATS LISTENER ==========
             onValue(child(rr, 'seats'), s => { 
                 currentRoomSeats = s.val() || {}; 
-                updateSeat('seat1', currentRoomSeats.seat1, "UMAR"); updateSeat('seat2', currentRoomSeats.seat2, "GURIYA"); updateSeat('seat3', currentRoomSeats.seat3, "1"); updateSeat('seat4', currentRoomSeats.seat4, "2"); updateSeat('seat5', currentRoomSeats.seat5, "3"); updateSeat('seat6', currentRoomSeats.seat6, "4"); 
-                const hc = document.getElementById('heartbeat-container'); const seat1Occupied = currentRoomSeats.seat1 && currentRoomSeats.seat1.uid; const seat2Occupied = currentRoomSeats.seat2 && currentRoomSeats.seat2.uid; if(seat1Occupied && seat2Occupied) { hc.classList.add('heartbeat-active'); } else { hc.classList.remove('heartbeat-active'); } 
+                updateSeat('seat1', currentRoomSeats.seat1, "UMAR"); 
+                updateSeat('seat2', currentRoomSeats.seat2, "GURIYA"); 
+                updateSeat('seat3', currentRoomSeats.seat3, "1"); 
+                updateSeat('seat4', currentRoomSeats.seat4, "2"); 
+                updateSeat('seat5', currentRoomSeats.seat5, "3"); 
+                updateSeat('seat6', currentRoomSeats.seat6, "4"); 
+                
+                // heartbeat logic
+                const hc = document.getElementById('heartbeat-container'); 
+                const seat1Occupied = currentRoomSeats.seat1 && currentRoomSeats.seat1.uid; 
+                const seat2Occupied = currentRoomSeats.seat2 && currentRoomSeats.seat2.uid; 
+                if(seat1Occupied && seat2Occupied) { 
+                    hc.classList.add('heartbeat-active'); 
+                } else { 
+                    hc.classList.remove('heartbeat-active'); 
+                } 
+                
                 document.querySelectorAll('.action-menu-overlay').forEach(b => b.style.display = 'none'); 
             }); 
+            
             onValue(child(rr, 'messages'), s => { 
                 const chatArea = document.getElementById('chat-display-area'); 
                 chatArea.innerHTML = ''; 
@@ -1353,59 +1868,67 @@
                             else { chatArea.innerHTML+=`<div class="chat-message-bubble"><b>${m.name}:</b> ${m.text}</div>`; } 
                         } 
                     }); 
-                    // Auto-scroll to bottom to show new message
                     setTimeout(forceScrollBottom, 100); 
                 } 
             });
         };
 
-        function updateSeat(id, data, def) { 
-            const v=document.getElementById(`${id}-visual`); 
-            const n=document.getElementById(`${id}-name`); 
-            const cont=document.getElementById(`cont-${id}`); 
-            
-            // Reset Container Classes
-            cont.classList.remove('seat-occupied', 'seat-locked', 'has-frame'); 
-            cont.style.border = "2px solid #333"; 
-            
-            // Remove any existing mute badges
-            const existingBadge = cont.querySelector('.seat-mute-badge');
-            if(existingBadge) existingBadge.remove();
+        // ========== UPDATED SEAT RENDERING FUNCTION ==========
+        window.updateSeat = (seatId, data, defaultName) => {
+            const visualDiv = document.getElementById(`${seatId}-visual`);
+            const nameSpan = document.getElementById(`${seatId}-name`);
+            const container = document.getElementById(`cont-${seatId}`);
+            if (!visualDiv || !nameSpan || !container) return;
 
-            if(data && data.locked) { 
-                // LOCKED STATE
-                v.innerHTML=`<i class="fa-solid fa-lock text-red-500 text-xl"></i>`; 
-                cont.classList.add('seat-locked'); 
-                n.innerText = "Locked"; 
-                n.classList.add('text-red-500'); n.classList.remove('text-green-500', 'text-gray-500'); 
+            // reset classes & remove any extra mute badge
+            container.classList.remove('seat-occupied', 'seat-locked', 'has-frame');
+            const oldBadge = container.querySelector('.seat-mute-badge');
+            if(oldBadge) oldBadge.remove();
             
-            } else if(data && data.uid) { 
-                // USER SITTING STATE (User Image replaces Chair)
-                let html = `<div class="visual-root"><img src="${data.pic}" class="visual-img">`; 
-                if(data.frame) { html += `<img src="${data.frame}" class="visual-frame">`; cont.classList.add('has-frame'); } 
-                else { cont.style.border = "2px solid #22c55e"; } 
-                html += `</div>`; 
-                v.innerHTML = html; 
-                cont.classList.add('seat-occupied'); 
-                n.innerText=data.name; 
-                n.classList.add('text-green-500'); n.classList.remove('text-gray-500', 'text-red-500'); 
-                
-                // Mute Badge Logic for Self
-                if(data.uid === currentUser.uid && isMicMuted) {
+            // Reset container border
+            container.style.border = "2px solid #333";
+
+            // Chair image already exists as .chair-bg-img inside container, keep it untouched.
+
+            if (data && data.locked) {
+                // locked seat: show lock icon on top of chair
+                visualDiv.innerHTML = `<div class="visual-root"><i class="fa-solid fa-lock text-red-500 text-xl" style="filter:drop-shadow(0 0 5px black);"></i></div>`;
+                container.classList.add('seat-locked');
+                nameSpan.innerText = "Locked";
+                nameSpan.className = "seat-name text-red-500";
+            }
+            else if (data && data.uid) {
+                // occupied seat: display user dp and frame
+                container.classList.add('seat-occupied');
+                let html = `<div class="visual-root">`;
+                html += `<img src="${data.pic || 'https://placehold.co/100'}" class="visual-img" onerror="this.src='https://placehold.co/100?text=U'">`;
+                if (data.frame) {
+                    html += `<img src="${data.frame}" class="visual-frame">`;
+                    container.classList.add('has-frame');
+                } else {
+                    // if no frame, add green border to container
+                    container.style.border = "2px solid #22c55e";
+                }
+                html += `</div>`;
+                visualDiv.innerHTML = html;
+                nameSpan.innerText = data.name || defaultName;
+                nameSpan.className = "seat-name occupied text-green-500";
+
+                // add mute badge if current user muted
+                if (data.uid === currentUser?.uid && isMicMuted) {
                     const badge = document.createElement('div');
                     badge.className = 'seat-mute-badge';
                     badge.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
-                    cont.appendChild(badge);
+                    container.appendChild(badge);
                 }
-            } else { 
-                // EMPTY STATE (Ab yahan Chair.png show hogi)
-                // Width/Height % mein hai taake bare aur chhote dono seats mein fit aye
-                v.innerHTML = `<img src="./chair.png" alt="Chair" style="width: 65%; height: 65%; object-fit: contain; opacity: 0.9; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));">`;
-                
-                n.innerText=def; 
-                n.classList.remove('text-green-500', 'text-red-500'); n.classList.add('text-gray-500'); 
-            } 
-        }
+            } else {
+                // empty seat: just chair visible, no dp
+                visualDiv.innerHTML = ''; // clear any previous dp content
+                nameSpan.innerText = defaultName;
+                nameSpan.className = "seat-name";
+                container.style.border = "2px solid #333";
+            }
+        };
 
         window.hideAllMicMenus = (e) => { if (!e.target.closest('.mic-container') && !e.target.closest('.mic-container-sm')) { document.querySelectorAll('.action-menu-overlay').forEach(b => b.style.display = 'none'); } };
         window.toggleMicMenu = (seatId, defName, event) => { event.stopPropagation(); document.querySelectorAll('.action-menu-overlay').forEach(b => b.style.display = 'none'); const menu = document.getElementById(`menu-${seatId}`); const seatData = currentRoomSeats[seatId]; const amIOwner = currentUser.uid === currentRoomOwner; const amISitting = seatData && seatData.uid === currentUser.uid; menu.innerHTML = ''; menu.style.display = 'flex'; if (amISitting) { menu.innerHTML = `<div class="btn-action btn-red" onclick="leaveSeat('${seatId}')">LEAVE</div>`; return; } if (seatData && seatData.locked) { if (amIOwner) { menu.innerHTML = `<div class="btn-action btn-yellow" onclick="toggleLock('${seatId}', false)">UNLOCK</div>`; } else { menu.innerHTML = `<div class="text-white text-xs p-2">LOCKED</div>`; } return; } if (seatData && seatData.uid) { if (amIOwner) { menu.innerHTML = `<div class="btn-action btn-yellow" onclick="unseatUser('${seatId}')">UNSEAT</div><div class="btn-action btn-red" onclick="kickUserFromRoom('${seatId}', '${seatData.uid}')">KICK</div>`; } else { menu.innerHTML = `<div class="text-white text-xs p-2">${seatData.name}</div>`; } return; } if (!seatData || !seatData.uid) { let html = `<div class="btn-action btn-green" onclick="sitDown('${seatId}', '${defName}')">SIT</div>`; if (amIOwner) { html += `<div class="btn-action btn-blue" onclick="toggleLock('${seatId}', true)">LOCK</div>`; } menu.innerHTML = html; } };
@@ -1485,6 +2008,7 @@
         
         window.minimizeRoom = () => { 
             closeExitMenu(); 
+            document.getElementById('floating-room-btn').style.display = 'flex'; 
             document.getElementById('view-room').style.display = 'none'; 
             document.getElementById('view-room').classList.remove('view-active'); 
             document.getElementById('view-home').style.display = 'flex'; 
@@ -1493,7 +2017,6 @@
             document.getElementById('bottom-nav').classList.remove('hidden'); 
             document.getElementById('bottom-nav').classList.add('flex'); 
             if(currentRoomId) { 
-                document.getElementById('floating-room-btn').style.display='flex';
                 if(currentRoomData && currentRoomData.roomCover) {
                     document.getElementById('float-btn-img').src = currentRoomData.roomCover;
                 } else {
@@ -1506,6 +2029,12 @@
         
         window.leaveRoomFull = () => { 
             closeExitMenu(); 
+            
+            // Clean up Rocket
+            document.getElementById('rocket-container').classList.add('hidden');
+            currentRoomExp = 0;
+            lastRocketLevel = 0;
+
             document.getElementById('floating-room-btn').style.display = 'none'; 
             document.getElementById('view-room').style.display = 'none'; 
             document.getElementById('view-room').classList.remove('view-active'); 
@@ -1575,7 +2104,7 @@
             }
         };
 
-        // MIC & SPEAKER TOGGLES (Fixed: No Double Icons, No Toast)
+        // MIC & SPEAKER TOGGLES
         window.toggleMic = () => {
             const btn = document.getElementById('btn-mic');
             isMicMuted = !isMicMuted;
@@ -1610,14 +2139,10 @@
             isSpeakerMuted = !isSpeakerMuted;
             
             if(isSpeakerMuted) {
-                // Visual
                 btn.className = 'fa-solid fa-volume-xmark room-icon-btn text-gray-500';
-                // Functional: MUTE YouTube Iframe
                 if(iframe) iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'mute', args: ''}), '*');
             } else {
-                // Visual
                 btn.className = 'fa-solid fa-volume-high room-icon-btn text-white';
-                // Functional: UNMUTE YouTube Iframe
                 if(iframe) iframe.contentWindow.postMessage(JSON.stringify({event: 'command', func: 'unmute', args: ''}), '*');
             }
         };
@@ -1632,7 +2157,6 @@
             if(usersSnap.exists()) {
                 const users = usersSnap.val();
                 for (const [uid, name] of Object.entries(users)) {
-                    // Fetch user details for pic
                     const uSnap = await get(ref(db, `users/${uid}`));
                     const uData = uSnap.val() || {};
                     const pic = uData.photoURL || `https://ui-avatars.com/api/?name=${name}`;
@@ -1692,7 +2216,6 @@
             document.getElementById('fp-bio').innerText = d.bio || "No Bio";
             document.getElementById('fp-gender').src = d.gender === 'female' ? './female.png' : './male.png';
             
-            // Check following status
             const fCheck = await get(ref(db, `users/${currentUser.uid}/friends/${uid}`));
             const btn = document.getElementById('fp-action-btn');
             
@@ -1729,6 +2252,10 @@
         window.copyToClipboard = (text) => { navigator.clipboard.writeText(text).then(() => { Swal.fire({ toast: true, icon: 'success', title: 'ID Copied!', position: 'top', showConfirmButton: false, timer: 1500 }); }).catch(err => console.error('Failed to copy', err)); };
         window.showFriendList = async (type) => { const friendsSnap = await get(ref(db, `users/${currentUser.uid}/friends`)); let title = type === 'following' ? 'Following' : 'Fans'; let html = `<div class="flex flex-col gap-2 max-h-60 overflow-y-auto text-left">`; if(!friendsSnap.exists()) { html += `<div class="text-gray-400 text-center text-sm py-4">No users found.</div>`; } else { Object.entries(friendsSnap.val()).forEach(([fid, fname]) => { html += `<div class="flex items-center gap-3 bg-gray-800 p-2 rounded mb-1"><div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white text-xs">${fname[0]}</div><span class="text-white text-sm font-medium">${fname}</span></div>`; }); } html += `</div>`; Swal.fire({ title: title, html: html, background: '#111', color: '#fff', showConfirmButton: false, showCloseButton: true }); };
 
+        // Chair image fallback
+        document.querySelectorAll('.chair-bg-img').forEach(img => {
+            img.onerror = () => { img.style.display = 'none'; };
+        });
     </script>
 </body>
-</html>
+                              </html>
